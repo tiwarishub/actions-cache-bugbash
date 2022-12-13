@@ -18,6 +18,8 @@ jobs:
       with:
         path: /tmp/datacache
         key: ${{ github.event.inputs.key }}
+        restore-keys: |
+          test-
     - if: steps.cache.outputs.cache-hit != 'true'
       run: |
         rm -rf /tmp/datacache

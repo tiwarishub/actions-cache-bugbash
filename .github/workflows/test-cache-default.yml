@@ -1,0 +1,26 @@
+
+name: N size cache
+on:
+  workflow_dispatch:
+      inputs:
+        key:
+jobs:
+  my-example:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache URL
+      uses: actions/github-script@v6
+      with:
+        script: |
+          console.log("ACTIONS_CACHE_URL_VAL="+process.env['ACTIONS_CACHE_URL']);
+    - uses: actions/cache@700-actionscache-granular-cache-control
+      id: cache
+      with:
+        path: /tmp/datacache
+        key: ${{ github.event.inputs.key }}
+    - if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        rm -rf /tmp/datacache
+        mkdir -p /tmp/datacache
+        for y in {0..1};do openssl rand -out /tmp/datacache/data$y  -base64 $(( 1000 * 2**20 * 3/4 )); done 
+        du -sh /tmp/datacache
